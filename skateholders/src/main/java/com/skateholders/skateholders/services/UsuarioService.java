@@ -27,8 +27,10 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorLogin(String login) {
-        return usuarioRepository.findByLogin(login);
+        return usuarioRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com login: " + login));
     }
+
 
     public Usuario atualizar(Long id, Usuario novosDados) {
         return usuarioRepository.findById(id).map(usuarioExistente -> {
