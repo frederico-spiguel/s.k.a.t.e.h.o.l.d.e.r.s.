@@ -1,37 +1,31 @@
 package com.skateholders.skateholders.DTOs;
 
-import java.time.LocalDateTime;
-
+// Se você usar anotações de validação no futuro, os imports virão aqui
+// Ex: import jakarta.validation.constraints.NotNull;
 
 public class AtividadeInputDTO {
 
+    // @NotNull // Exemplo de validação futura
     private Long trickId;
-    private Long seshId;
-    private LocalDateTime horario;
-    private String obstaculo; // opcional
 
+    private String obstaculo;
+
+    // Construtores
+    public AtividadeInputDTO() {
+    }
+
+    public AtividadeInputDTO(Long trickId, String obstaculo) {
+        this.trickId = trickId;
+        this.obstaculo = obstaculo;
+    }
+
+    // Getters e Setters
     public Long getTrickId() {
         return trickId;
     }
 
     public void setTrickId(Long trickId) {
         this.trickId = trickId;
-    }
-
-    public Long getSeshId() {
-        return seshId;
-    }
-
-    public void setSeshId(Long seshId) {
-        this.seshId = seshId;
-    }
-
-    public LocalDateTime getHorario() {
-        return horario;
-    }
-
-    public void setHorario(LocalDateTime horario) {
-        this.horario = horario;
     }
 
     public String getObstaculo() {
@@ -41,6 +35,4 @@ public class AtividadeInputDTO {
     public void setObstaculo(String obstaculo) {
         this.obstaculo = obstaculo;
     }
-
-    // Getters e Setters
 }

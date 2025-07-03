@@ -3,12 +3,19 @@ package com.skateholders.skateholders.services;
 import com.skateholders.skateholders.DTOs.AtividadeInputDTO;
 import com.skateholders.skateholders.DTOs.AtividadeOutputDTO;
 import com.skateholders.skateholders.models.Atividade;
+import com.skateholders.skateholders.models.Sesh;
+import com.skateholders.skateholders.models.Trick;
+import com.skateholders.skateholders.models.Usuario;
 import com.skateholders.skateholders.repositories.AtividadeRepository;
-import com.skateholders.skateholders.repositories.TrickRepository;
 import com.skateholders.skateholders.repositories.SeshRepository;
+import com.skateholders.skateholders.repositories.TrickRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,85 +25,63 @@ public class AtividadeService {
 
     @Autowired
     private AtividadeRepository atividadeRepository;
-
     @Autowired
     private TrickRepository trickRepository;
-
     @Autowired
     private SeshRepository seshRepository;
 
-    public AtividadeOutputDTO criar(AtividadeInputDTO atividadeInputDTO) {
-        // Converte o input DTO para a entidade Atividade
-        Atividade atividade = new Atividade();
-        atividade.setTrick(trickRepository.findById(atividadeInputDTO.getTrickId()).orElseThrow());
-        atividade.setSesh(seshRepository.findById(atividadeInputDTO.getSeshId()).orElseThrow());
-        atividade.setHorario(atividadeInputDTO.getHorario());
-        atividade.setObstaculo(atividadeInputDTO.getObstaculo() != null ? atividadeInputDTO.getObstaculo() : "Flat");
+    @Transactional
+    public AtividadeOutputDTO registrar(AtividadeInputDTO atividadeInputDTO) {
+        Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        // Salva a Atividade no banco
+        LocalDate hoje = LocalDate.now();
+        Sesh seshDoDia = seshRepository.findByUsuarioAndData(usuarioLogado, hoje)
+                .orElseGet(() -> {
+                    Sesh novaSesh = new Sesh();
+                    novaSesh.setUsuario(usuarioLogado);
+                    novaSesh.setData(hoje);
+                    return seshRepository.save(novaSesh);
+                });
+
+        Trick trickRealizada = trickRepository.findById(atividadeInputDTO.getTrickId())
+                .orElseThrow(() -> new RuntimeException("Trick não encontrada!"));
+
+        Atividade atividade = new Atividade();
+        atividade.setSesh(seshDoDia);
+        atividade.setTrick(trickRealizada);
+        atividade.setHorario(LocalDateTime.now());
+        atividade.setObstaculo(atividadeInputDTO.getObstaculo());
+
         Atividade savedAtividade = atividadeRepository.save(atividade);
 
-        // Retorna o DTO de saída com os dados necessários
-        return new AtividadeOutputDTO(
-                savedAtividade.getId(),
-                savedAtividade.getTrick().getNome(),
-                savedAtividade.getTrick().getBase().getDescricao(),
-                savedAtividade.getSesh().getData(),
-                savedAtividade.getSesh().getUsuario().getLogin(),
-                savedAtividade.getHorario(),
-                savedAtividade.getObstaculo()
-        );
+        // Usando o novo construtor do DTO
+        return new AtividadeOutputDTO(savedAtividade);
     }
 
     public List<AtividadeOutputDTO> listarTodos() {
         return atividadeRepository.findAll().stream()
-                .map(atividade -> new AtividadeOutputDTO(
-                        atividade.getId(),
-                        atividade.getTrick().getNome(),
-                        atividade.getTrick().getBase().getDescricao(),
-                        atividade.getSesh().getData(),
-                        atividade.getSesh().getUsuario().getLogin(),
-                        atividade.getHorario(),
-                        atividade.getObstaculo()
-                ))
+                .map(AtividadeOutputDTO::new) // Forma resumida de .map(atividade -> new AtividadeOutputDTO(atividade))
                 .collect(Collectors.toList());
     }
 
     public Optional<AtividadeOutputDTO> buscarPorId(Long id) {
-        Optional<Atividade> atividadeOptional = atividadeRepository.findById(id);
-        if (atividadeOptional.isPresent()) {
-            Atividade atividade = atividadeOptional.get();
-            return Optional.of(new AtividadeOutputDTO(
-                    atividade.getId(),
-                    atividade.getTrick().getNome(),
-                    atividade.getTrick().getBase().getDescricao(),
-                    atividade.getSesh().getData(),
-                    atividade.getSesh().getUsuario().getLogin(),
-                    atividade.getHorario(),
-                    atividade.getObstaculo()
-            ));
-        }
-        return Optional.empty();
+        return atividadeRepository.findById(id).map(AtividadeOutputDTO::new);
     }
 
+    @Transactional
     public AtividadeOutputDTO atualizar(Long id, AtividadeInputDTO atividadeInputDTO) {
         Atividade existente = atividadeRepository.findById(id).orElseThrow();
-        existente.setTrick(trickRepository.findById(atividadeInputDTO.getTrickId()).orElseThrow());
-        existente.setSesh(seshRepository.findById(atividadeInputDTO.getSeshId()).orElseThrow());
-        existente.setHorario(atividadeInputDTO.getHorario());
-        existente.setObstaculo(atividadeInputDTO.getObstaculo() != null ? atividadeInputDTO.getObstaculo() : "Flat");
+
+        // Adapta a lógica de atualização
+        Trick novaTrick = trickRepository.findById(atividadeInputDTO.getTrickId()).orElseThrow();
+        existente.setTrick(novaTrick);
+        existente.setObstaculo(atividadeInputDTO.getObstaculo());
+        // Nota: A lógica de mudar a Sesh ou horário em uma atualização pode ser mais complexa
+        // e foi mantida simples aqui.
 
         Atividade updatedAtividade = atividadeRepository.save(existente);
 
-        return new AtividadeOutputDTO(
-                updatedAtividade.getId(),
-                updatedAtividade.getTrick().getNome(),
-                updatedAtividade.getTrick().getBase().getDescricao(),
-                updatedAtividade.getSesh().getData(),
-                updatedAtividade.getSesh().getUsuario().getLogin(),
-                updatedAtividade.getHorario(),
-                updatedAtividade.getObstaculo()
-        );
+        return new AtividadeOutputDTO(updatedAtividade);
     }
 
     public void deletar(Long id) {
