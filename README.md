@@ -74,6 +74,9 @@
 - Indica que a aplicação é eficiente e o problema está nos **recursos de infraestrutura**, não no código.
 
 
+-----------------------------------------------------------------------------------------------------------------------------
+
+ 
 # Nome do Serviço 2: Buscar Detalhes da Sessão
 
 ## Endpoint
