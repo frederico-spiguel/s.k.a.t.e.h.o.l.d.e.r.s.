@@ -36,7 +36,8 @@
 - **Sistema:** Aplicação back-end em Spring Boot 3, rodando com Java 17 localmente (`localhost:8080`).
 - **Banco de Dados:** PostgreSQL (versão X.X), rodando localmente na mesma máquina.
 - **Executor do Teste:** Ferramenta de teste de carga k6 (versão X.X).
-- **Máquina:** Notebook com Windows 11, processador Core i7-10750H, 16GB RAM DDR4.
+- **Máquina:** Processador	12th Gen Intel(R) Core(TM) i5-12400F   2.50 GHz RAM instalada	32,0 GB 
+ Sistema: Windows 11 64 bits
 - **Observação:** A aplicação, o banco e o teste rodaram na mesma máquina, eliminando a latência de rede.
 
 ---
