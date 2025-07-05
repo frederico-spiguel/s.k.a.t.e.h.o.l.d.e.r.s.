@@ -1,5 +1,5 @@
 # Relatório dos testes de cargas - SLA -  S.K.A.T.E.H.O.L.D.E.R.S.
-## Nome do Serviço 1: Registrar atividade (possivelmente criar sessão)
+## Nome do Serviço 1: Registrar atividade 
  ## Gráfico e tabelas -> https://github.com/frederico-spiguel/s.k.a.t.e.h.o.l.d.e.r.s./blob/main/relatorioservico1.html
 ## Endpoint: POST /atividades
 
@@ -34,8 +34,8 @@
 
 **Configurações do ambiente:**
 - **Sistema:** Aplicação back-end em Spring Boot 3, rodando com Java 17 localmente (`localhost:8080`).
-- **Banco de Dados:** PostgreSQL (versão X.X), rodando localmente na mesma máquina.
-- **Executor do Teste:** Ferramenta de teste de carga k6 (versão X.X).
+- **Banco de Dados:** MySQL (v8.4), rodando localmente na mesma máquina.
+- **Executor do Teste:** Ferramenta de teste de carga k6 (v1.1.0).
 - **Máquina:** Processador	12th Gen Intel(R) Core(TM) i5-12400F   2.50 GHz RAM instalada	32,0 GB 
  Sistema: Windows 11 64 bits
 - **Observação:** A aplicação, o banco e o teste rodaram na mesma máquina, eliminando a latência de rede.
@@ -106,7 +106,11 @@
 
 ## Medição de Desempenho (SLA)
 
+![image](https://github.com/user-attachments/assets/874b5c7a-8cc5-44e6-9d20-09e779175648)
+
 **Data da medição:** 05/07/2025
+
+
 
 **Configurações do Ambiente:**
 - **Sistema:** Spring Boot 3 com Java 17 (localhost:8080)
@@ -149,3 +153,6 @@
 
 - O serviço é funcional, mas sofre de sérios problemas de performance causados por um padrão ineficiente de acesso a dados.
 - **Prioridade de correção:** alta, pois afeta diretamente a experiência do usuário e a capacidade do sistema de atender múltiplos usuários simultaneamente.
+
+
+
