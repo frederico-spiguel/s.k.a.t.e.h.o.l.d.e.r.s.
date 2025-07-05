@@ -74,7 +74,7 @@
 - Indica que a aplicação é eficiente e o problema está nos **recursos de infraestrutura**, não no código.
 
 
-# Serviço: Buscar Detalhes da Sessão
+# Nome do Serviço 2: Buscar Detalhes da Sessão
 
 ## Endpoint
 `GET /seshs/por-data?data={data}`
