@@ -72,3 +72,76 @@
 ### O que **não** foi gargalo:
 - A lógica da aplicação (`AtividadeService`, comandos SQL) manteve uma latência baixa (~198ms).
 - Indica que a aplicação é eficiente e o problema está nos **recursos de infraestrutura**, não no código.
+
+
+# Serviço: Buscar Detalhes da Sessão
+
+## Endpoint
+`GET /seshs/por-data?data={data}`
+
+## Tipo de Operações
+- **Leitura apenas**
+
+### Descrição da Leitura
+- Realiza uma busca complexa (`SELECT`) que envolve múltiplas tabelas: `Sesh`, `Atividade`, `Trick`.
+- Compõe a resposta com todos os detalhes de uma sessão específica e suas atividades.
+
+---
+
+## Arquivos envolvidos
+
+- `backend/src/main/java/com/skateholders/skateholders/controllers/SeshController.java`
+- `backend/src/main/java/com/skateholders/skateholders/services/SeshService.java`
+- `backend/src/main/java/com/skateholders/skateholders/repositories/SeshRepository.java`
+- `backend/src/main/java/com/skateholders/skateholders/models/Sesh.java`
+- `backend/src/main/java/com/skateholders/skateholders/models/Atividade.java`
+- `backend/src/main/java/com/skateholders/skateholders/config/SecurityConfig.java`
+- `load-testing/teste-busca-sessao.js`
+
+---
+
+## Medição de Desempenho (SLA)
+
+**Data da medição:** 05/07/2025
+
+**Configurações do Ambiente:**
+- **Sistema:** Spring Boot 3 com Java 17 (localhost:8080)
+- **Banco de Dados:** PostgreSQL 15, rodando localmente
+- **Executor do Teste:** Ferramenta de carga `k6`
+- **Máquina:** Notebook com Windows 11, Intel Core i7, 16GB RAM
+
+---
+
+### Teste: Carga Moderada
+
+- **Latência média:** 15.71 segundos (15718.88 ms)
+- **Vazão:** ~2.35 requisições por segundo
+- **Concorrência:** 50 usuários virtuais (VUs)
+- **Taxa de sucesso:** 99.6%
+- **Resultado:** Teste falhou o threshold de latência de 2s. Embora a taxa de sucesso seja alta, a resposta é lenta demais para ser aceitável.
+
+---
+
+## Levantamento de Hipóteses de Gargalos
+
+###  Gargalo Principal — Problema de "N+1 Select" (comprovado)
+- Para cada requisição:
+  - 1 query busca a sessão (`Sesh`)
+  - N queries adicionais buscam cada `Atividade` relacionada
+- Para sessões com ~50 atividades, o sistema executa ~51 queries por requisição
+
+### Impacto
+- Cada requisição ocupa uma **thread de servidor** e uma **conexão de banco** por 15–30 segundos
+- Isso afeta diretamente a **vazão e escalabilidade** do sistema
+- Sob essa condição, o sistema **não escala horizontalmente**
+
+### Gargalo de Código (solucionável)
+- O problema está na camada de acesso a dados (JPA/Repository)
+- Pode ser resolvido com uso de `JOIN FETCH` ou `@EntityGraph`, eliminando o padrão N+1 e otimizando a consulta
+
+---
+
+## Conclusão
+
+- O serviço é funcional, mas sofre de sérios problemas de performance causados por um padrão ineficiente de acesso a dados.
+- **Prioridade de correção:** alta, pois afeta diretamente a experiência do usuário e a capacidade do sistema de atender múltiplos usuários simultaneamente.
