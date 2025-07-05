@@ -1,5 +1,6 @@
 # Relatório dos testes de cargas - SLA -  S.K.A.T.E.H.O.L.D.E.R.S.
 ## Nome do Serviço 1: Registrar atividade (possivelmente criar sessão)
+## [a link] (https://github.com/frederico-spiguel/s.k.a.t.e.h.o.l.d.e.r.s./blob/main/relatorioservico1.html)
 ## Endpoint: POST /atividades
 
 ## Tipo de operações: Leitura e Escrita
