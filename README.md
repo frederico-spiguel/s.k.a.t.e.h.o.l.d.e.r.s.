@@ -70,9 +70,8 @@
 - O Tomcat, por padrão, suporta até 200 threads simultâneas.
 - Com a carga extrema, novas conexões HTTP foram recusadas antes mesmo da lógica da aplicação ser executada.
 
-### O que **não** foi gargalo:
-- A lógica da aplicação (`AtividadeService`, comandos SQL) manteve uma latência baixa (~198ms).
-- Indica que a aplicação é eficiente e o problema está nos **recursos de infraestrutura**, não no código.
+### Conclusão:
+- Diante das análises e das hipóteses levantadas, fica claro que não há gargalos relacionados a código, que poderiam ser otimizados. Portanto, o grupo não irá focar seus esforços em otimizar a infraestrutura para suportar essa quantidade maior.
 
 
 -----------------------------------------------------------------------------------------------------------------------------
