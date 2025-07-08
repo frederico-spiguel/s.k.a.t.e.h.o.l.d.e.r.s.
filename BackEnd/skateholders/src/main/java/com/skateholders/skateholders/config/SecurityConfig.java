@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer; // <-- NOVO IMPORT
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -48,12 +48,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // A LINHA QUE FALTAVA PARA CONECTAR TUDO
-                .cors(Customizer.withDefaults()) // <-- ADICIONADO AQUI
+                .cors(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Rotas públicas que não exigem autenticação
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/tricks").permitAll()
+
+                        // Para QUALQUER outra requisição, o usuário precisa estar autenticado.
+                        // Como agora nosso usuário tem a ROLE_USER, ele será considerado
+                        // autenticado e autorizado para todas as operações internas.
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

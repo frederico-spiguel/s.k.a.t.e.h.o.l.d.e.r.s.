@@ -55,11 +55,14 @@ export default function Dashboard() {
 
         {/* Botão principal agora abre o modal */}
         <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-white text-blue-600 font-bold text-lg px-12 py-4 rounded-full shadow-lg hover:bg-blue-100 transition-transform hover:scale-105"
-        >
-          Registrar atividade
-        </button>
+  onClick={() => {
+    console.log("CLICOU NO BOTÃO DO DASHBOARD!"); // Nosso espião
+    setIsModalOpen(true);
+  }}
+  className="bg-white text-blue-600 font-bold text-lg px-12 py-4 rounded-full shadow-lg hover:bg-blue-100 transition-transform hover:scale-105"
+>
+  Registrar atividade
+</button>
 
         {/* Rodapé */}
         <div className="mt-auto w-full flex justify-between items-center text-sm font-medium px-6 pt-16">
@@ -69,7 +72,7 @@ export default function Dashboard() {
       </div>
 
       {/* RENDERIZAÇÃO CONDICIONAL DO MODAL */}
-      {isModalOpen && <RegistrarAtividadeModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <RegistrarAtividadeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
     </>
   );
 }

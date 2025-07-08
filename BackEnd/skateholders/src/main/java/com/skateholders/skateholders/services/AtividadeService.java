@@ -30,6 +30,11 @@ public class AtividadeService {
     @Autowired
     private SeshRepository seshRepository;
 
+    /**
+     * MÉTODO PARA O BOTÃO PRINCIPAL (REGISTRO AO VIVO).
+     * Cria ou utiliza a sessão do dia atual e registra a atividade com o horário atual.
+     * NÃO MODIFICAR.
+     */
     @Transactional
     public AtividadeOutputDTO registrar(AtividadeInputDTO atividadeInputDTO) {
         Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -53,14 +58,36 @@ public class AtividadeService {
         atividade.setObstaculo(atividadeInputDTO.getObstaculo());
 
         Atividade savedAtividade = atividadeRepository.save(atividade);
-
-        // Usando o novo construtor do DTO
         return new AtividadeOutputDTO(savedAtividade);
     }
 
+    /**
+     * NOVO MÉTODO PARA O BOTÃO DE EDIÇÃO DE SESSÃO.
+     * Adiciona uma atividade a uma sessão específica (passada pelo ID) com horário fixo de 23:59.
+     */
+    @Transactional
+    public AtividadeOutputDTO adicionarAtividadeEmSessaoExistente(Long seshId, AtividadeInputDTO atividadeInputDTO) {
+        Sesh seshExistente = seshRepository.findById(seshId)
+                .orElseThrow(() -> new RuntimeException("Sessão com ID " + seshId + " não encontrada."));
+
+        Trick trickRealizada = trickRepository.findById(atividadeInputDTO.getTrickId())
+                .orElseThrow(() -> new RuntimeException("Trick não encontrada!"));
+
+        Atividade novaAtividade = new Atividade();
+        novaAtividade.setSesh(seshExistente);
+        novaAtividade.setTrick(trickRealizada);
+        novaAtividade.setHorario(seshExistente.getData().atTime(23, 59));
+        novaAtividade.setObstaculo(atividadeInputDTO.getObstaculo());
+
+        Atividade savedAtividade = atividadeRepository.save(novaAtividade);
+        return new AtividadeOutputDTO(savedAtividade);
+    }
+
+    // --- MÉTODOS EXISTENTES (Mantidos para não quebrar outras funcionalidades) ---
+
     public List<AtividadeOutputDTO> listarTodos() {
         return atividadeRepository.findAll().stream()
-                .map(AtividadeOutputDTO::new) // Forma resumida de .map(atividade -> new AtividadeOutputDTO(atividade))
+                .map(AtividadeOutputDTO::new)
                 .collect(Collectors.toList());
     }
 
@@ -70,21 +97,21 @@ public class AtividadeService {
 
     @Transactional
     public AtividadeOutputDTO atualizar(Long id, AtividadeInputDTO atividadeInputDTO) {
-        Atividade existente = atividadeRepository.findById(id).orElseThrow();
+        Atividade existente = atividadeRepository.findById(id).orElseThrow(() -> new RuntimeException("Atividade não encontrada!"));
+        Trick novaTrick = trickRepository.findById(atividadeInputDTO.getTrickId()).orElseThrow(() -> new RuntimeException("Trick não encontrada!"));
 
-        // Adapta a lógica de atualização
-        Trick novaTrick = trickRepository.findById(atividadeInputDTO.getTrickId()).orElseThrow();
         existente.setTrick(novaTrick);
         existente.setObstaculo(atividadeInputDTO.getObstaculo());
-        // Nota: A lógica de mudar a Sesh ou horário em uma atualização pode ser mais complexa
-        // e foi mantida simples aqui.
 
         Atividade updatedAtividade = atividadeRepository.save(existente);
-
         return new AtividadeOutputDTO(updatedAtividade);
     }
 
     public void deletar(Long id) {
+        // Adicionada verificação de existência para boa prática
+        if (!atividadeRepository.existsById(id)) {
+            throw new RuntimeException("Atividade com ID " + id + " não encontrada para exclusão.");
+        }
         atividadeRepository.deleteById(id);
     }
 }

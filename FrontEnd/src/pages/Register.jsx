@@ -38,7 +38,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-400 text-white flex flex-col items-center justify-center px-6">
       <form onSubmit={handleSubmit} className="bg-white text-blue-800 p-8 rounded-xl shadow-xl w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">CADASTRO BARALHO</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Cadastro</h2>
         <input type="text" placeholder="Login" value={login} onChange={(e) => setLogin(e.target.value)} className="w-full mb-4 p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
         <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} className="w-full mb-4 p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
         {erro && <p className="text-sm text-center mb-4 text-red-600">{erro}</p>}

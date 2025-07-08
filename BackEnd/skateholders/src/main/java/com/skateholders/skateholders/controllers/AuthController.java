@@ -37,11 +37,9 @@ public class AuthController {
             Usuario usuario = usuarioRepository.findByLogin(dto.getLogin()).orElseThrow();
             String token = tokenService.generateToken(dto.getLogin());
 
-            // Assumindo que seu LoginResponseDTO tem um construtor (String token, boolean fezTriagem)
             return ResponseEntity.ok(new LoginResponseDTO(token, usuario.isFezTriagem()));
         } catch (BadCredentialsException e) {
-            // Seria bom ter um construtor que aceita só a mensagem de erro também
-            return ResponseEntity.status(401).build(); // Retornar 401 sem corpo é mais comum
+            return ResponseEntity.status(401).build();
         }
     }
 
