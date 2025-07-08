@@ -33,7 +33,7 @@
 **Data da medição:** 04/07/2025
 
 **Configurações do ambiente:**
-- **Sistema:** Aplicação back-end em Spring Boot 3, rodando com Java 17 localmente (`localhost:8080`).
+- **Sistema:** Aplicação back-end em Spring Boot 3, rodando com Java 21 localmente (`localhost:8080`).
 - **Banco de Dados:** MySQL (v8.4), rodando localmente na mesma máquina.
 - **Executor do Teste:** Ferramenta de teste de carga k6 (v1.1.0).
 - **Máquina:** Processador	12th Gen Intel(R) Core(TM) i5-12400F   2.50 GHz RAM instalada	32,0 GB 
@@ -105,27 +105,27 @@
 
 ## Medição de Desempenho (SLA)
 
-![image](https://github.com/user-attachments/assets/874b5c7a-8cc5-44e6-9d20-09e779175648)
-
-**Data da medição:** 05/07/2025
-
-
-
-**Configurações do Ambiente:**
-- **Sistema:** Spring Boot 3 com Java 17 (localhost:8080)
-- **Banco de Dados:** PostgreSQL 15, rodando localmente
-- **Executor do Teste:** Ferramenta de carga `k6`
-- **Máquina:** Notebook com Windows 11, Intel Core i7, 16GB RAM
+**Configurações do ambiente:**
+- **Sistema:** Aplicação back-end em Spring Boot 3, rodando com Java 21 localmente (`localhost:8080`).
+- **Banco de Dados:** MySQL (v8.4), rodando localmente na mesma máquina.
+- **Executor do Teste:** Ferramenta de teste de carga k6 (v1.1.0).
+- **Máquina:** Processador	12th Gen Intel(R) Core(TM) i5-12400F   2.50 GHz RAM instalada	32,0 GB 
+ Sistema: Windows 11 64 bits
+- **Observação:** A aplicação, o banco e o teste rodaram na mesma máquina, eliminando a latência de rede.
 
 ---
 
-### Teste: Carga Moderada
+### Teste 1 (Antes das modificações)
+
+**Data da medição:** 05/07/2025
 
 - **Latência média:** 15.71 segundos (15718.88 ms)
 - **Vazão:** ~2.35 requisições por segundo
 - **Concorrência:** 50 usuários virtuais (VUs)
 - **Taxa de sucesso:** 99.6%
 - **Resultado:** Teste falhou o threshold de latência de 2s. Embora a taxa de sucesso seja alta, a resposta é lenta demais para ser aceitável.
+
+![image](https://github.com/user-attachments/assets/874b5c7a-8cc5-44e6-9d20-09e779175648)
 
 ---
 
@@ -152,6 +152,23 @@
 
 - O serviço é funcional, mas sofre de sérios problemas de performance causados por um padrão ineficiente de acesso a dados.
 - **Prioridade de correção:** alta, pois afeta diretamente a experiência do usuário e a capacidade do sistema de atender múltiplos usuários simultaneamente.
+
+### Teste 2: (Após as modificações necessárias)
+
+**Data da medição:** 07/07/2025
+
+- **Latência média:** 88 ms
+- **Vazão:** 48.35 requisições por segundo
+- **Concorrência:** 50 usuários virtuais (VUs)
+- **Taxa de sucesso:** 100%
+- **Resultado:** = O teste passou com sucesso. A otimização do código com JOIN FETCH eliminou o gargalo de latência que foi identificado.
+
+![image](https://github.com/user-attachments/assets/d9836ceb-4edb-4864-aa28-7c90380ecbd7)
+
+### Melhorias:
+
+- A única classe alterada foi a SeshRepository:
+- `backend/src/main/java/com/skateholders/skateholders/repositories/SeshRepository.java`
 
 
 
