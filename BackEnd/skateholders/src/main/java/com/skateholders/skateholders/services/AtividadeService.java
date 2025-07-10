@@ -5,10 +5,12 @@ import com.skateholders.skateholders.DTOs.AtividadeOutputDTO;
 import com.skateholders.skateholders.models.Atividade;
 import com.skateholders.skateholders.models.Sesh;
 import com.skateholders.skateholders.models.Trick;
+import com.skateholders.skateholders.models.TrickUsuario;
 import com.skateholders.skateholders.models.Usuario;
 import com.skateholders.skateholders.repositories.AtividadeRepository;
 import com.skateholders.skateholders.repositories.SeshRepository;
 import com.skateholders.skateholders.repositories.TrickRepository;
+import com.skateholders.skateholders.repositories.TrickUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,17 +31,14 @@ public class AtividadeService {
     private TrickRepository trickRepository;
     @Autowired
     private SeshRepository seshRepository;
+    @Autowired
+    private TrickUsuarioRepository trickUsuarioRepository;
 
-    /**
-     * MÉTODO PARA O BOTÃO PRINCIPAL (REGISTRO AO VIVO).
-     * Cria ou utiliza a sessão do dia atual e registra a atividade com o horário atual.
-     * NÃO MODIFICAR.
-     */
     @Transactional
     public AtividadeOutputDTO registrar(AtividadeInputDTO atividadeInputDTO) {
         Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         LocalDate hoje = LocalDate.now();
+
         Sesh seshDoDia = seshRepository.findByUsuarioAndData(usuarioLogado, hoje)
                 .orElseGet(() -> {
                     Sesh novaSesh = new Sesh();
@@ -56,15 +55,13 @@ public class AtividadeService {
         atividade.setTrick(trickRealizada);
         atividade.setHorario(LocalDateTime.now());
         atividade.setObstaculo(atividadeInputDTO.getObstaculo());
-
         Atividade savedAtividade = atividadeRepository.save(atividade);
+
+        atualizarContadorDeAcertos(usuarioLogado, trickRealizada, true);
+
         return new AtividadeOutputDTO(savedAtividade);
     }
 
-    /**
-     * NOVO MÉTODO PARA O BOTÃO DE EDIÇÃO DE SESSÃO.
-     * Adiciona uma atividade a uma sessão específica (passada pelo ID) com horário fixo de 23:59.
-     */
     @Transactional
     public AtividadeOutputDTO adicionarAtividadeEmSessaoExistente(Long seshId, AtividadeInputDTO atividadeInputDTO) {
         Sesh seshExistente = seshRepository.findById(seshId)
@@ -78,12 +75,49 @@ public class AtividadeService {
         novaAtividade.setTrick(trickRealizada);
         novaAtividade.setHorario(seshExistente.getData().atTime(23, 59));
         novaAtividade.setObstaculo(atividadeInputDTO.getObstaculo());
-
         Atividade savedAtividade = atividadeRepository.save(novaAtividade);
+
+        Usuario usuarioDaSessao = seshExistente.getUsuario();
+        atualizarContadorDeAcertos(usuarioDaSessao, trickRealizada, true);
+
         return new AtividadeOutputDTO(savedAtividade);
     }
 
-    // --- MÉTODOS EXISTENTES (Mantidos para não quebrar outras funcionalidades) ---
+    @Transactional
+    public AtividadeOutputDTO atualizar(Long id, AtividadeInputDTO atividadeInputDTO) {
+        Atividade atividadeExistente = atividadeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Atividade não encontrada!"));
+
+        Trick trickAntiga = atividadeExistente.getTrick();
+        Trick trickNova = trickRepository.findById(atividadeInputDTO.getTrickId())
+                .orElseThrow(() -> new RuntimeException("Trick não encontrada!"));
+
+        Usuario usuario = atividadeExistente.getSesh().getUsuario();
+
+        if (!trickAntiga.getId().equals(trickNova.getId())) {
+            atualizarContadorDeAcertos(usuario, trickAntiga, false);
+            atualizarContadorDeAcertos(usuario, trickNova, true);
+        }
+
+        atividadeExistente.setTrick(trickNova);
+        atividadeExistente.setObstaculo(atividadeInputDTO.getObstaculo());
+        Atividade updatedAtividade = atividadeRepository.save(atividadeExistente);
+
+        return new AtividadeOutputDTO(updatedAtividade);
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        Atividade atividadeParaDeletar = atividadeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Atividade com ID " + id + " não encontrada para exclusão."));
+
+        Usuario usuario = atividadeParaDeletar.getSesh().getUsuario();
+        Trick trick = atividadeParaDeletar.getTrick();
+
+        atualizarContadorDeAcertos(usuario, trick, false);
+
+        atividadeRepository.delete(atividadeParaDeletar);
+    }
 
     public List<AtividadeOutputDTO> listarTodos() {
         return atividadeRepository.findAll().stream()
@@ -95,23 +129,19 @@ public class AtividadeService {
         return atividadeRepository.findById(id).map(AtividadeOutputDTO::new);
     }
 
-    @Transactional
-    public AtividadeOutputDTO atualizar(Long id, AtividadeInputDTO atividadeInputDTO) {
-        Atividade existente = atividadeRepository.findById(id).orElseThrow(() -> new RuntimeException("Atividade não encontrada!"));
-        Trick novaTrick = trickRepository.findById(atividadeInputDTO.getTrickId()).orElseThrow(() -> new RuntimeException("Trick não encontrada!"));
+    private void atualizarContadorDeAcertos(Usuario usuario, Trick trick, boolean incrementar) {
+        TrickUsuario trickUsuario = trickUsuarioRepository.findByUsuarioAndTrick(usuario, trick)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Relação TrickUsuario não encontrada para o usuário " + usuario.getLogin() +
+                                " e a trick " + trick.getNome() + ". A triagem pode não ter sido feita."
+                ));
 
-        existente.setTrick(novaTrick);
-        existente.setObstaculo(atividadeInputDTO.getObstaculo());
-
-        Atividade updatedAtividade = atividadeRepository.save(existente);
-        return new AtividadeOutputDTO(updatedAtividade);
-    }
-
-    public void deletar(Long id) {
-        // Adicionada verificação de existência para boa prática
-        if (!atividadeRepository.existsById(id)) {
-            throw new RuntimeException("Atividade com ID " + id + " não encontrada para exclusão.");
+        if (incrementar) {
+            trickUsuario.incrementarAcertos();
+        } else {
+            trickUsuario.decrementarAcertos();
         }
-        atividadeRepository.deleteById(id);
+
+        trickUsuarioRepository.save(trickUsuario);
     }
 }

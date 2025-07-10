@@ -16,6 +16,10 @@ import Triagem from "./pages/Triagem.jsx";
 import SessoesPage from "./pages/SessoesPage.jsx";
 import SessaoDetalhe from "./pages/SessaoDetalhe.jsx";
 
+// --- PASSO 1: IMPORTE A NOVA PÁGINA DE CONQUISTAS ---
+import ConquistasPage from "./pages/ConquistasPage.jsx";
+
+
 function App() {
   return (
     <Router>
@@ -27,10 +31,13 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/triagem" element={<Triagem />} />
 
-        {/* --- NOVAS ROTAS PARA A FUNCIONALIDADE DE SESSÕES --- */}
+        {/* --- ROTAS PARA A FUNCIONALIDADE DE SESSÕES --- */}
         <Route path="/sessoes" element={<SessoesPage />} />
         <Route path="/sessoes/:data" element={<SessaoDetalhe />} />
         
+        {/* --- PASSO 2: ADICIONE A NOVA ROTA DE CONQUISTAS AQUI --- */}
+        <Route path="/conquistas" element={<ConquistasPage />} />
+
       </Routes>
     </Router>
   );

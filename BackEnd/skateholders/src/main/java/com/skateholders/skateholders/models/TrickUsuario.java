@@ -35,6 +35,19 @@ public class TrickUsuario {
         this.id = new TrickUsuarioId(usuario.getId(), trick.getId());
     }
 
+    public void incrementarAcertos() {
+        this.acertos++;
+    }
+
+    /**
+     * Decrementa o contador de acertos em 1, garantindo que nunca fique negativo.
+     */
+    public void decrementarAcertos() {
+        if (this.acertos > 0) {
+            this.acertos--;
+        }
+    }
+
     public TrickUsuarioId getId() {
         return id;
     }

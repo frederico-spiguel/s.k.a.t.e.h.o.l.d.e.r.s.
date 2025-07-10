@@ -15,6 +15,12 @@ export default function Dashboard() {
     if (!token) navigate("/login");
   }, [navigate]);
 
+  // Função para lidar com o sucesso do registro no modo "ao vivo"
+  const handleLiveSuccess = () => {
+      setIsModalOpen(false);
+      // Aqui você poderia, no futuro, adicionar lógica para atualizar os pontos, por exemplo.
+  }
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-400 text-white flex flex-col items-center py-10 px-6 font-sans">
@@ -37,7 +43,7 @@ export default function Dashboard() {
             <span>Evolução</span>
           </div>
 
-          {/* --- BOTÃO SESSÕES AGORA É CLICÁVEL --- */}
+          {/* --- BOTÃO SESSÕES --- */}
           <div 
             onClick={() => navigate('/sessoes')} 
             className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
@@ -45,24 +51,24 @@ export default function Dashboard() {
             <div className="text-4xl mb-1">🗓️</div>
             <span>Sessões</span>
           </div>
-          {/* ------------------------------------ */}
 
-          <div className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
+          {/* --- BOTÃO CONQUISTAS (AGORA CLICÁVEL) --- */}
+          <div 
+            onClick={() => navigate('/conquistas')} 
+            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
+          >
             <div className="text-4xl mb-1">🏆</div>
             <span>Conquistas</span>
           </div>
         </div>
 
-        {/* Botão principal agora abre o modal */}
+        {/* Botão principal para registrar atividade */}
         <button
-  onClick={() => {
-    console.log("CLICOU NO BOTÃO DO DASHBOARD!"); // Nosso espião
-    setIsModalOpen(true);
-  }}
-  className="bg-white text-blue-600 font-bold text-lg px-12 py-4 rounded-full shadow-lg hover:bg-blue-100 transition-transform hover:scale-105"
->
-  Registrar atividade
-</button>
+            onClick={() => setIsModalOpen(true)}
+            className="bg-white text-blue-600 font-bold text-lg px-12 py-4 rounded-full shadow-lg hover:bg-blue-100 transition-transform hover:scale-105"
+        >
+          Registrar atividade
+        </button>
 
         {/* Rodapé */}
         <div className="mt-auto w-full flex justify-between items-center text-sm font-medium px-6 pt-16">
@@ -72,7 +78,11 @@ export default function Dashboard() {
       </div>
 
       {/* RENDERIZAÇÃO CONDICIONAL DO MODAL */}
-      {isModalOpen && <RegistrarAtividadeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+      <RegistrarAtividadeModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleLiveSuccess}
+      />
     </>
   );
 }
