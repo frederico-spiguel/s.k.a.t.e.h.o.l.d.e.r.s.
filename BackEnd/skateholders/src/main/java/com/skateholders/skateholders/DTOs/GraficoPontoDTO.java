@@ -1,22 +1,16 @@
 package com.skateholders.skateholders.DTOs;
 
-import java.math.BigInteger;
-import java.sql.Date;
 import java.time.LocalDate;
 
 public class GraficoPontoDTO {
-    private Long sessaoIndex; // Eixo X: O número da sessão (1, 2, 3...)
-    private Long valor;        // Eixo Y: O valor acumulado de acertos
-    private LocalDate data;    // Metadado: A data real da sessão (para o front-end usar como label)
+    private Long sessaoIndex;
+    private Long valor;
+    private LocalDate data;
 
-    // Construtor que a nossa nova query vai usar
-    public GraficoPontoDTO(BigInteger sessaoIndex, Long valor, Date data) {
-        this.sessaoIndex = sessaoIndex.longValue();
-        this.valor = valor;
-        this.data = data.toLocalDate();
-    }
+    // Construtor vazio
+    public GraficoPontoDTO() {}
 
-    // Getters e Setters
+    // Getters e Setters (sem alteração)
     public Long getSessaoIndex() { return sessaoIndex; }
     public void setSessaoIndex(Long sessaoIndex) { this.sessaoIndex = sessaoIndex; }
     public Long getValor() { return valor; }

@@ -1,14 +1,13 @@
 package com.skateholders.skateholders.repositories;
 
-import com.skateholders.skateholders.DTOs.GraficoPontoDTO; // <-- Import necessário
 import com.skateholders.skateholders.models.Atividade;
 import com.skateholders.skateholders.models.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query; // <-- Import necessário
-import org.springframework.data.repository.query.Param; // <-- Import necessário
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List; // <-- Import necessário
+import java.util.List;
 
 @Repository
 public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
@@ -16,15 +15,13 @@ public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
     long countBySesh_Usuario(Usuario usuario);
 
     /**
-     * NOVO MÉTODO: Chama a query nativa nomeada 'Atividade.calcularEvolucao'
-     * que definimos no arquivo jpa-named-queries.properties.
-     * Esta é a query que faz todo o cálculo pesado de acertos acumulados.
+     * MTODO ATUALIZADO: Agora ele retorna os dados brutos da query
+     * como uma Lista de Arrays de Objetos, para evitar o bug de instanciação do DTO.
      */
     @Query(nativeQuery = true, name = "Atividade.calcularEvolucao")
-    List<GraficoPontoDTO> calcularEvolucaoAcertos(
+    List<Object[]> calcularEvolucaoAcertos(
             @Param("usuarioId") Long usuarioId,
             @Param("tipoFiltro") String tipoFiltro,
             @Param("valorFiltro") String valorFiltro
     );
-
 }

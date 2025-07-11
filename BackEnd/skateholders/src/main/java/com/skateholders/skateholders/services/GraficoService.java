@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,13 +36,28 @@ public class GraficoService {
             valor = "0";
         }
 
-        return atividadeRepository.calcularEvolucaoAcertos(usuario.getId(), tipoFiltro, valor);
+        List<Object[]> resultadosBrutos = atividadeRepository.calcularEvolucaoAcertos(usuario.getId(), tipoFiltro, valor);
+
+        List<GraficoPontoDTO> dadosGrafico = new ArrayList<>();
+        long sessaoCounter = 1; // Nosso contador manual para o eixo X
+        for (Object[] resultado : resultadosBrutos) {
+            GraficoPontoDTO ponto = new GraficoPontoDTO();
+
+            // Agora lemos apenas as duas colunas que o banco retorna
+            ponto.setData(((Date) resultado[0]).toLocalDate());
+            ponto.setValor(((Number) resultado[1]).longValue());
+
+            // E adicionamos nosso próprio índice de sessão
+            ponto.setSessaoIndex(sessaoCounter++);
+
+            dadosGrafico.add(ponto);
+        }
+
+        return dadosGrafico;
     }
 
     public List<GraficoOpcaoDTO> getOpcoesDeTricks() {
         Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // Agora o código é limpo: busca e converte diretamente.
         return trickUsuarioRepository.findTricksComAcertosByUsuario(usuario)
                 .stream()
                 .map(trickUsuario -> new GraficoOpcaoDTO(

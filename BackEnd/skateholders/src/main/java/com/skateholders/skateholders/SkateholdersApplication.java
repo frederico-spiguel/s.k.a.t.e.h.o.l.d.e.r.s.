@@ -10,4 +10,5 @@ public class SkateholdersApplication {
 		SpringApplication.run(SkateholdersApplication.class, args);
 	}
 
+
 }
