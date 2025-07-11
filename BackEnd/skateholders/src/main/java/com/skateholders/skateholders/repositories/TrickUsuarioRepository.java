@@ -1,5 +1,6 @@
 package com.skateholders.skateholders.repositories;
 
+import com.skateholders.skateholders.DTOs.GraficoOpcaoDTO;
 import com.skateholders.skateholders.models.Trick;
 import com.skateholders.skateholders.models.TrickUsuario;
 import com.skateholders.skateholders.models.TrickUsuarioId;
@@ -15,9 +16,11 @@ public interface TrickUsuarioRepository extends JpaRepository<TrickUsuario, Tric
 
     Optional<TrickUsuario> findByUsuarioAndTrick(Usuario usuario, Trick trick);
 
-    // --- NOVO MTODO PARA A TELA DE PERFIL ---
-    // Busca todas as relações de um usuário, já trazendo os dados da trick junto para otimizar.
-    @Query("SELECT tu FROM TrickUsuario tu JOIN FETCH tu.trick WHERE tu.usuario = :usuario")
+    // Adicionado DISTINCT para garantir a consistência dos resultados com JOIN FETCH
+    @Query("SELECT DISTINCT tu FROM TrickUsuario tu JOIN FETCH tu.trick WHERE tu.usuario = :usuario")
     List<TrickUsuario> findAllByUsuarioWithTrick(@Param("usuario") Usuario usuario);
 
+    // --- QUERY CORRIGIDA COM DISTINCT ---
+    @Query("SELECT DISTINCT tu FROM TrickUsuario tu JOIN FETCH tu.trick WHERE tu.usuario = :usuario AND tu.acertos > 0 ORDER BY tu.trick.nome ASC")
+    List<TrickUsuario> findTricksComAcertosByUsuario(@Param("usuario") Usuario usuario);
 }

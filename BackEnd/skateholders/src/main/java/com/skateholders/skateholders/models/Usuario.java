@@ -2,10 +2,11 @@ package com.skateholders.skateholders.models;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List; // Import necessário
 
 @Entity
 @Table(name = "usuario")
@@ -71,7 +72,8 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Não usamos roles por enquanto
+        // AQUI ESTÁ A CORREÇÃO: Agora todo usuário tem a permissão ROLE_USER.
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

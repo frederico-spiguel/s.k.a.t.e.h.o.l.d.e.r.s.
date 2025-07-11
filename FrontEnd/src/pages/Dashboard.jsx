@@ -43,7 +43,9 @@ export default function Dashboard() {
             <span>Meu perfil</span>
           </div>
 
-          <div className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
+          <div 
+            onClick={() => navigate('/graficos/selecao')}
+            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
             <div className="text-4xl mb-1">📈</div>
             <span>Evolução</span>
           </div>

@@ -24,6 +24,7 @@ import ConquistasPage from "./pages/ConquistasPage.jsx";
 
 // Página de Perfil
 import PerfilPage from "./pages/PerfilPage.jsx";
+import GraficoSelecaoPage from "./pages/GraficoSelecaoPage.jsx";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/sessoes/:data" element={<SessaoDetalhe />} />
         <Route path="/conquistas" element={<ConquistasPage />} />
         <Route path="/perfil" element={<PerfilPage />} />
+        <Route path="/graficos/selecao" element={<GraficoSelecaoPage />} />
 
       </Routes>
     </Router>
