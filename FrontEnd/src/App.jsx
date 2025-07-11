@@ -10,33 +10,37 @@ import {
 import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Register from "./pages/Register.jsx";
+
+// --- AQUI ESTÁ A CORREÇÃO ---
+// O caminho correto para o arquivo Triagem.jsx
 import Triagem from "./pages/Triagem.jsx";
 
-// Nossas novas páginas para a funcionalidade de Sessões
+// Páginas de Sessões
 import SessoesPage from "./pages/SessoesPage.jsx";
 import SessaoDetalhe from "./pages/SessaoDetalhe.jsx";
 
-// --- PASSO 1: IMPORTE A NOVA PÁGINA DE CONQUISTAS ---
+// Página de Conquistas
 import ConquistasPage from "./pages/ConquistasPage.jsx";
 
+// Página de Perfil
+import PerfilPage from "./pages/PerfilPage.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Rotas Antigas */}
+        {/* Rotas Públicas e de Autenticação */}
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/triagem" element={<Triagem />} />
 
-        {/* --- ROTAS PARA A FUNCIONALIDADE DE SESSÕES --- */}
+        {/* Rotas Principais da Aplicação */}
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/sessoes" element={<SessoesPage />} />
         <Route path="/sessoes/:data" element={<SessaoDetalhe />} />
-        
-        {/* --- PASSO 2: ADICIONE A NOVA ROTA DE CONQUISTAS AQUI --- */}
         <Route path="/conquistas" element={<ConquistasPage />} />
+        <Route path="/perfil" element={<PerfilPage />} />
 
       </Routes>
     </Router>

@@ -18,7 +18,6 @@ export default function Dashboard() {
   // Função para lidar com o sucesso do registro no modo "ao vivo"
   const handleLiveSuccess = () => {
       setIsModalOpen(false);
-      // Aqui você poderia, no futuro, adicionar lógica para atualizar os pontos, por exemplo.
   }
 
   return (
@@ -34,16 +33,21 @@ export default function Dashboard() {
 
         {/* Ícones do menu */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16 text-center text-base font-medium">
-          <div className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
+          
+          {/* --- BOTÃO MEU PERFIL (AGORA CLICÁVEL) --- */}
+          <div 
+            onClick={() => navigate('/perfil')}
+            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
+          >
             <div className="text-4xl mb-1">👤</div>
             <span>Meu perfil</span>
           </div>
+
           <div className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
             <div className="text-4xl mb-1">📈</div>
             <span>Evolução</span>
           </div>
 
-          {/* --- BOTÃO SESSÕES --- */}
           <div 
             onClick={() => navigate('/sessoes')} 
             className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
@@ -52,7 +56,6 @@ export default function Dashboard() {
             <span>Sessões</span>
           </div>
 
-          {/* --- BOTÃO CONQUISTAS (AGORA CLICÁVEL) --- */}
           <div 
             onClick={() => navigate('/conquistas')} 
             className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"

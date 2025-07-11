@@ -138,10 +138,28 @@ public class AtividadeService {
 
         if (incrementar) {
             trickUsuario.incrementarAcertos();
+            // --- NOVA LÓGICA DE LEVEL UP AUTOMÁTICO ---
+            verificarEAtualizarNivel(trickUsuario);
         } else {
             trickUsuario.decrementarAcertos();
         }
 
         trickUsuarioRepository.save(trickUsuario);
+    }
+
+    /**
+     * NOVA LÓGICA: Verifica se o número de acertos atingiu um novo patamar
+     * e atualiza o nível do usuário para aquela trick.
+     */
+    private void verificarEAtualizarNivel(TrickUsuario trickUsuario) {
+        int acertos = trickUsuario.getAcertos();
+        int nivelAtual = trickUsuario.getNivel();
+
+        // Nível 1 = Iniciante, 2 = Intermediário, 3 = Avançado
+        if (acertos >= 50 && nivelAtual < 3) {
+            trickUsuario.setNivel(3); // Avançado
+        } else if (acertos >= 10 && nivelAtual < 2) {
+            trickUsuario.setNivel(2); // Intermediário
+        }
     }
 }

@@ -38,8 +38,8 @@ public class ConquistaDataLoader implements CommandLineRunner {
         List<ConquistaDoc> lista = new ArrayList<>();
 
         // --- Conquistas de Nível Iniciante (Acertos Baixos) ---
-        lista.add(criarConquista("Primeiro Ollie", "Acerte seu primeiro Ollie.", "ACERTOS_TRICK", 10, "/emblemas/primeiro_ollie.png", Map.of("trickId", 15L, "quantidade", 1)));
-        lista.add(criarConquista("Primeiro Flip", "Acerte seu primeiro Kickflip.", "ACERTOS_TRICK", 10, "/emblemas/primeiro_flip.png", Map.of("trickId", 8L, "quantidade", 1)));
+        lista.add(criarConquista("Primeiro Ollie", "Acerte seu primeiro Ollie.", "ACERTOS_TRICK", 10, "/emblemas/primeiro_ollie.png", Map.of("trickId", 8L, "quantidade", 1)));
+        lista.add(criarConquista("Primeiro Flip", "Acerte seu primeiro Kickflip.", "ACERTOS_TRICK", 10, "/emblemas/primeiro_flip.png", Map.of("trickId", 13L, "quantidade", 1)));
         lista.add(criarConquista("No Chão de Fábrica", "Registre 10 atividades no total.", "TOTAL_ATIVIDADES", 10, "/emblemas/dez_atividades.png", Map.of("quantidade", 10)));
         lista.add(criarConquista("Semana Produtiva", "Registre 50 atividades no total.", "TOTAL_ATIVIDADES", 25, "/emblemas/cinquenta_atividades.png", Map.of("quantidade", 50)));
         lista.add(criarConquista("Aprendiz de Shove-it", "Acerte 10 Pop Shove-its.", "ACERTOS_TRICK", 20, "/emblemas/aprendiz_shoveit.png", Map.of("trickId", 10L, "quantidade", 10))); // Supondo que Pop Shove-it é ID 10

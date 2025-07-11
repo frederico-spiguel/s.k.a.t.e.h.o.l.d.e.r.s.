@@ -1,4 +1,4 @@
-package com.skateholders.skateholders.config;
+/*package com.skateholders.skateholders.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,4 +15,4 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
-}
+}*/
