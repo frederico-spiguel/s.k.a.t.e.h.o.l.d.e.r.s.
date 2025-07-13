@@ -3,16 +3,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import TrickStatusCard from '../components/TrickStatusCard'; // Vamos criar este componente a seguir
+import TrickStatusCard from '../components/TrickStatusCard';
+import ProficienciaModal from '../components/ProficienciaModal';
 
 export default function PerfilPage() {
     const [perfil, setPerfil] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [trickParaProficiencia, setTrickParaProficiencia] = useState(null);
 
-    useEffect(() => {
+    const fetchPerfil = () => {
+        // Para garantir que o feedback de loading apareça ao recarregar
         setIsLoading(true);
-        // Fazendo a chamada para o nosso novo e poderoso endpoint de perfil
         api.get('/api/perfil')
             .then(response => {
                 setPerfil(response.data);
@@ -24,7 +26,20 @@ export default function PerfilPage() {
             .finally(() => {
                 setIsLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchPerfil();
     }, []);
+
+    const handlePedirProficiencia = (trickStatus) => {
+        setTrickParaProficiencia(trickStatus);
+    };
+    
+    const handleProficienciaSuccess = () => {
+        setTrickParaProficiencia(null); // Fecha o modal
+        fetchPerfil(); // Recarrega todos os dados do perfil
+    };
 
     if (isLoading) {
         return <div className="text-center p-10 bg-gray-100 min-h-screen">Carregando perfil...</div>;
@@ -38,8 +53,7 @@ export default function PerfilPage() {
         return <div className="text-center p-10 bg-gray-100 min-h-screen">Nenhum dado de perfil encontrado.</div>;
     }
     
-    // Lógica para ordenar as manobras: "acesas" primeiro
-    const manobrasOrdenadas = [...perfil.manobrasStatus].sort((a, b) => b.acceso - a.acceso);
+    const manobrasOrdenadas = [...perfil.manobrasStatus].sort((a, b) => b.isAceso - a.isAceso);
 
     return (
         <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
@@ -48,7 +62,7 @@ export default function PerfilPage() {
                     <Link to="/dashboard" className="text-blue-600 hover:underline font-semibold">&larr; Voltar para o Dashboard</Link>
                 </div>
 
-                {/* Seção do Cabeçalho do Perfil */}
+                {/* CABEÇALHO DO PERFIL - DE VOLTA AO LUGAR CERTO! */}
                 <div className="bg-white p-6 rounded-xl shadow-lg mb-8 text-center">
                     <h1 className="text-4xl font-bold text-gray-800">{perfil.nomeUsuario}</h1>
                     <div className="flex justify-center items-center gap-6 mt-4 text-gray-600">
@@ -73,11 +87,24 @@ export default function PerfilPage() {
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">Progresso nas Manobras</h2>
                     <div className="space-y-3">
                         {manobrasOrdenadas.map(trickStatus => (
-                            <TrickStatusCard key={trickStatus.nomeTrick} trickStatus={trickStatus} />
+                            <TrickStatusCard 
+                                key={trickStatus.nomeTrick} 
+                                trickStatus={trickStatus} 
+                                onPedirProficiencia={handlePedirProficiencia}
+                            />
                         ))}
                     </div>
                 </div>
             </div>
+
+            {/* Modal de Proficiência */}
+            {trickParaProficiencia && (
+                <ProficienciaModal
+                    trick={trickParaProficiencia}
+                    onClose={() => setTrickParaProficiencia(null)}
+                    onSuccess={handleProficienciaSuccess}
+                />
+            )}
         </div>
     );
 }
