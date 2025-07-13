@@ -1,43 +1,49 @@
-// src/pages/ConquistasPage.jsx (VERSÃO ATUALIZADA)
+// src/pages/ConquistasPage.jsx
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+// --- PASSO 1: Importe 'useNavigate' em vez de 'Link' se não for mais usar ---
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import ConquistaCard from '../components/ConquistaCard';
-import ConquistaDetalheModal from '../components/ConquistaDetalheModal'; // <-- Importamos o novo modal
+import ConquistaDetalheModal from '../components/ConquistaDetalheModal';
 
 export default function ConquistasPage() {
     const [conquistas, setConquistas] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    
-    // --- NOVOS ESTADOS PARA CONTROLAR O MODAL ---
     const [conquistaSelecionada, setConquistaSelecionada] = useState(null);
+    
+    // --- PASSO 2: Pegue a função 'navigate' ---
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        // ... (código de busca de dados continua o mesmo)
+    const fetchConquistas = () => {
+        setIsLoading(true);
         api.get('/api/conquistas')
-            .then(response => { setConquistas(response.data); })
-            .catch(err => { 
+            .then(response => {
+                setConquistas(response.data);
+            })
+            .catch(err => {
                 console.error("Erro ao buscar conquistas:", err);
                 setError("Não foi possível carregar as conquistas.");
             })
-            .finally(() => { setIsLoading(false); });
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        fetchConquistas();
     }, []);
 
-    // Função para abrir o modal com a conquista clicada
     const handleCardClick = (conquista) => {
         setConquistaSelecionada(conquista);
     };
 
-    // Função para fechar o modal
     const handleCloseModal = () => {
         setConquistaSelecionada(null);
     };
     
-    // Função que será chamada pelo modal após uma reivindicação bem-sucedida
     const handleConquistaReivindicada = (conquistaId) => {
-        // Atualiza a lista de conquistas para refletir o novo status "desbloqueada"
         setConquistas(prevConquistas =>
             prevConquistas.map(c => 
                 c.id === conquistaId ? { ...c, desbloqueada: true } : c
@@ -45,32 +51,45 @@ export default function ConquistasPage() {
         );
     };
 
-    // ... (código de renderização de loading e erro continua o mesmo)
+    if (isLoading) {
+        return <div className="text-center p-10">Carregando conquistas...</div>;
+    }
+
+    if (error) {
+        return <div className="text-center p-10 text-red-500">{error}</div>;
+    }
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-8">
             <div className="max-w-6xl mx-auto">
+
+                {/* --- PASSO 3: ADICIONE O BOTÃO INTELIGENTE AQUI NO TOPO --- */}
+                <div className="w-full mb-8">
+                    <button
+                        onClick={() => navigate(-1)} // A mágica acontece aqui!
+                        className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                    >
+                        &larr; Voltar
+                    </button>
+                </div>
+                
                 <h1 className="text-4xl font-bold text-center mb-10 tracking-wider">
                     Galeria de Conquistas
                 </h1>
 
+                {/* Grid para as cartas de conquista */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {conquistas.map(conquista => (
-                        // Adicionamos o onClick a cada card
                         <div key={conquista.id} onClick={() => handleCardClick(conquista)}>
                             <ConquistaCard conquista={conquista} />
                         </div>
                     ))}
                 </div>
 
-                 <div className="text-center mt-12">
-                    <Link to="/dashboard" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        &larr; Voltar para o Dashboard
-                    </Link>
-                </div>
+                {/* O link antigo no final da página foi removido */}
             </div>
 
-            {/* RENDERIZAÇÃO CONDICIONAL DO MODAL */}
+            {/* Renderização Condicional do Modal */}
             {conquistaSelecionada && (
                 <ConquistaDetalheModal 
                     conquista={conquistaSelecionada}

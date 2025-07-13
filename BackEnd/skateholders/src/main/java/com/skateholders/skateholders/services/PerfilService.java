@@ -64,36 +64,50 @@ public class PerfilService {
         Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Trick trick = trickRepository.findById(dto.getTrickId())
                 .orElseThrow(() -> new RuntimeException("Trick não encontrada com o ID: " + dto.getTrickId()));
+
         TrickUsuario trickUsuario = trickUsuarioRepository.findByUsuarioAndTrick(usuario, trick)
                 .orElseThrow(() -> new IllegalStateException("Relação TrickUsuario não encontrada."));
+
+        // 1. Validações iniciais (pré-requisitos)
         if (trickUsuario.isProficiencia()) {
             throw new IllegalStateException("Você já possui proficiência nesta manobra.");
         }
-        boolean podeTentar = trickUsuario.getNivel() >= 2;
-        boolean passouNoTeste = dto.getAcertosReportados() >= 7;
-        if (!podeTentar) {
+        if (trickUsuario.getNivel() < 2) { // Nível 2 = Intermediário
             throw new IllegalStateException("É necessário ser nível Intermediário para pedir proficiência.");
         }
-        if (passouNoTeste) {
+
+        // 2. Registra os acertos reportados como atividades.
+        // Isso agora acontece SEMPRE, independentemente do resultado.
+        if (dto.getAcertosReportados() > 0) {
             for (int i = 0; i < dto.getAcertosReportados(); i++) {
                 AtividadeInputDTO atividadeDTO = new AtividadeInputDTO();
                 atividadeDTO.setTrickId(trick.getId());
                 atividadeDTO.setObstaculo("flatground");
+                // A chamada a este método já vai incrementar o contador e verificar o level up.
                 atividadeService.registrar(atividadeDTO);
             }
         }
-        if (podeTentar && passouNoTeste) {
-            trickUsuario.setProficiencia(true);
-            trickUsuario.setNivel(3);
-            trickUsuarioRepository.save(trickUsuario);
-            return true;
+
+        // 3. Verifica se ele passou no teste de proficiência.
+        boolean passouNoTeste = dto.getAcertosReportados() >= 7;
+
+        if (passouNoTeste) {
+            // Recarrega a entidade TrickUsuario para garantir que temos os acertos atualizados.
+            TrickUsuario trickUsuarioAtualizado = trickUsuarioRepository.findByUsuarioAndTrick(usuario, trick)
+                    .orElseThrow(() -> new IllegalStateException("Erro ao recarregar TrickUsuario após atualização de acertos."));
+
+            trickUsuarioAtualizado.setProficiencia(true);
+            trickUsuarioAtualizado.setNivel(3); // Garante a promoção para Avançado
+            trickUsuarioRepository.save(trickUsuarioAtualizado);
+            return true; // Sucesso!
         }
-        return false;
+
+        return false; // Falha (não atingiu os 7 acertos)
     }
 
     private TrickStatusDTO converterParaTrickStatusDTO(TrickUsuario tu) {
         TrickStatusDTO dto = new TrickStatusDTO();
-        dto.setTrickId(tu.getTrick().getId()); // <-- LINHA ADICIONADA
+        dto.setTrickId(tu.getTrick().getId());
         dto.setNomeTrick(tu.getTrick().getNome());
         dto.setAcertos(tu.getAcertos());
         dto.setProficiencia(tu.isProficiencia());

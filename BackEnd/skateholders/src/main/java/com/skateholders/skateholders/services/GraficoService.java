@@ -26,7 +26,7 @@ public class GraficoService {
         Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         String tipoFiltro = tipo;
-        if (tipo.equals("dificuldade")) {
+        if ("dificuldade".equals(tipo)) {
             switch (valor) {
                 case "facil": tipoFiltro = "dificuldade_facil"; break;
                 case "media": tipoFiltro = "dificuldade_media"; break;
@@ -39,16 +39,16 @@ public class GraficoService {
         List<Object[]> resultadosBrutos = atividadeRepository.calcularEvolucaoAcertos(usuario.getId(), tipoFiltro, valor);
 
         List<GraficoPontoDTO> dadosGrafico = new ArrayList<>();
-        long sessaoCounter = 1; // Nosso contador manual para o eixo X
+
         for (Object[] resultado : resultadosBrutos) {
             GraficoPontoDTO ponto = new GraficoPontoDTO();
 
-            // Agora lemos apenas as duas colunas que o banco retorna
-            ponto.setData(((Date) resultado[0]).toLocalDate());
-            ponto.setValor(((Number) resultado[1]).longValue());
-
-            // E adicionamos nosso próprio índice de sessão
-            ponto.setSessaoIndex(sessaoCounter++);
+            // --- AQUI ESTÁ A CORREÇÃO FINAL ---
+            // Agora tratamos TODOS os resultados numéricos como 'Number'
+            // para máxima compatibilidade.
+            ponto.setSessaoIndex(((Number) resultado[0]).longValue()); // sessaoIndex
+            ponto.setValor(((Number) resultado[1]).longValue());       // valor acumulado
+            ponto.setData(((Date) resultado[2]).toLocalDate());      // data
 
             dadosGrafico.add(ponto);
         }

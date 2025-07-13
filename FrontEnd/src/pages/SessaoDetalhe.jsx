@@ -45,7 +45,6 @@ export default function SessaoDetalhe() {
   if (isLoading) return <div className="text-center p-10">Carregando...</div>;
   if (!sessao) return <div className="text-center p-10">Nenhuma sessão encontrada.</div>;
 
-  // LINHA DE FORMATAÇÃO DA DATA (CORRIGIDA E VERIFICADA)
   const dataFormatada = format(new Date(sessao.data.replace(/-/g, '/')), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
 
   return (
@@ -57,7 +56,18 @@ export default function SessaoDetalhe() {
             <div className="flex justify-between items-start flex-wrap gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800">Sessão de {dataFormatada}</h1>
-                {sessao.editavel && <span className="mt-2 text-sm bg-green-200 text-green-800 font-semibold px-3 py-1 rounded-full inline-block">Sessão Editável</span>}
+                
+                {/* --- AQUI ESTÁ A ÚNICA MUDANÇA --- */}
+                {sessao.editavel ? (
+                  <span className="mt-2 text-sm bg-green-200 text-green-800 font-semibold px-3 py-1 rounded-full inline-block">
+                    Sessão Editável
+                  </span>
+                ) : (
+                  <span className="mt-2 text-sm bg-red-200 text-red-800 font-semibold px-3 py-1 rounded-full inline-block">
+                    Sessão Não Editável
+                  </span>
+                )}
+                
               </div>
               {sessao.editavel && (
                 <button onClick={() => setIsCreateModalOpen(true)} className="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors shadow">
@@ -76,7 +86,6 @@ export default function SessaoDetalhe() {
                       <p className="text-sm text-gray-600">Obstáculo: {atividade.obstaculo}</p>
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
-                      {/* LINHA DE FORMATAÇÃO DO HORÁRIO (CORRIGIDA E VERIFICADA) */}
                       <span className="text-sm text-gray-500 font-mono">{format(new Date(atividade.horario), 'HH:mm')}</span>
                       {sessao.editavel && (
                         <div className="flex gap-2 border-l pl-4">
