@@ -8,21 +8,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/mongo/trick-tutorials")
+@RequestMapping("/api/tutoriais") // Rota mais limpa para o front-end consumir
 public class TrickTutorialController {
 
     @Autowired
     private TrickTutorialService service;
 
+    /**
+     * Este será o endpoint principal que seu front-end vai chamar
+     * para obter a lista de todos os tutoriais a serem exibidos.
+     */
     @GetMapping
     public List<TrickTutorial> listarTodos() {
         return service.listarTodos();
     }
 
-    @GetMapping("/trick/{trickId}")
-    public List<TrickTutorial> listarPorTrick(@PathVariable Long trickId) {
-        return service.listarPorTrickId(trickId);
-    }
+    // Os endpoints abaixo podem ser mantidos para fins administrativos
 
     @PostMapping
     public TrickTutorial criar(@RequestBody TrickTutorial tutorial) {

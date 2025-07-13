@@ -11,9 +11,9 @@ public class TrickTutorial {
     @Id
     private String id;
 
-    private Long trickId;         // ID do trick no banco SQL
-    private String titulo;        // Título do tutorial
-    private String videoUrl;      // Link do vídeo
+    private String titulo;        // Título do tutorial (ex: "Ollie - O Salto Fundamental")
+    private String descricao;     // NOVO CAMPO: Um texto curto de introdução.
+    private String videoUrl;      // Link do vídeo do YouTube
     private List<String> passos;  // Lista de instruções passo a passo
 
     // Getters e Setters
@@ -26,20 +26,20 @@ public class TrickTutorial {
         this.id = id;
     }
 
-    public Long getTrickId() {
-        return trickId;
-    }
-
-    public void setTrickId(Long trickId) {
-        this.trickId = trickId;
-    }
-
     public String getTitulo() {
         return titulo;
     }
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public String getVideoUrl() {

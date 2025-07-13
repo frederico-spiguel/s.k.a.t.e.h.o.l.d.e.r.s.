@@ -14,14 +14,12 @@ public class TrickTutorialService {
     @Autowired
     private TrickTutorialRepository repository;
 
+    // Retorna todos os tutoriais para a nossa página no front-end
     public List<TrickTutorial> listarTodos() {
         return repository.findAll();
     }
 
-    public List<TrickTutorial> listarPorTrickId(Long trickId) {
-        return repository.findByTrickId(trickId);
-    }
-
+    // Os métodos abaixo são ótimos para você gerenciar os tutoriais (via Postman, por exemplo)
     public TrickTutorial salvar(TrickTutorial tutorial) {
         return repository.save(tutorial);
     }

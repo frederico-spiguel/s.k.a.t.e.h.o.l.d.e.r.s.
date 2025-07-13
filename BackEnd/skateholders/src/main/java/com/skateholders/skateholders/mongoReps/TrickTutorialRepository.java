@@ -3,9 +3,6 @@ package com.skateholders.skateholders.mongoReps;
 import com.skateholders.skateholders.mongoDocs.TrickTutorial;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-
+// Não precisamos de nenhum mtodo customizado aqui, o MongoRepository já nos dá tudo.
 public interface TrickTutorialRepository extends MongoRepository<TrickTutorial, String> {
-    List<TrickTutorial> findByTrickId(Long trickId);
 }
-

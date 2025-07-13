@@ -1,5 +1,4 @@
 // src/App.jsx
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,11 +15,11 @@ import SessoesPage from "./pages/SessoesPage.jsx";
 import SessaoDetalhe from "./pages/SessaoDetalhe.jsx";
 import ConquistasPage from "./pages/ConquistasPage.jsx";
 import PerfilPage from "./pages/PerfilPage.jsx";
-
-// --- NOVAS PÁGINAS DE GRÁFICOS ---
 import GraficoSelecaoPage from "./pages/GraficoSelecaoPage.jsx";
 import GraficoVisualizarPage from "./pages/GraficoVisualizarPage.jsx";
 
+// --- IMPORTE A NOSSA NOVA PÁGINA DE TUTORIAIS ---
+import TutoriaisPage from "./pages/TutoriaisPage.jsx";
 
 function App() {
   return (
@@ -38,10 +37,11 @@ function App() {
         <Route path="/sessoes/:data" element={<SessaoDetalhe />} />
         <Route path="/conquistas" element={<ConquistasPage />} />
         <Route path="/perfil" element={<PerfilPage />} />
-        
-        {/* --- ROTAS FINAIS PARA OS GRÁFICOS --- */}
         <Route path="/graficos/selecao" element={<GraficoSelecaoPage />} />
         <Route path="/graficos/visualizar" element={<GraficoVisualizarPage />} />
+        
+        {/* --- ADICIONE A NOVA ROTA DE TUTORIAIS AQUI --- */}
+        <Route path="/tutoriais" element={<TutoriaisPage />} />
 
       </Routes>
     </Router>

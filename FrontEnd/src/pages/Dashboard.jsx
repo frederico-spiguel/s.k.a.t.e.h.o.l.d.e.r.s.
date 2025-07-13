@@ -33,35 +33,19 @@ export default function Dashboard() {
 
         {/* Ícones do menu */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16 text-center text-base font-medium">
-          
-          {/* --- BOTÃO MEU PERFIL (AGORA CLICÁVEL) --- */}
-          <div 
-            onClick={() => navigate('/perfil')}
-            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
-          >
+          <div onClick={() => navigate('/perfil')} className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
             <div className="text-4xl mb-1">👤</div>
             <span>Meu perfil</span>
           </div>
-
-          <div 
-            onClick={() => navigate('/graficos/selecao')}
-            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
+          <div onClick={() => navigate('/graficos/selecao')} className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
             <div className="text-4xl mb-1">📈</div>
             <span>Evolução</span>
           </div>
-
-          <div 
-            onClick={() => navigate('/sessoes')} 
-            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
-          >
+          <div onClick={() => navigate('/sessoes')} className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
             <div className="text-4xl mb-1">🗓️</div>
             <span>Sessões</span>
           </div>
-
-          <div 
-            onClick={() => navigate('/conquistas')} 
-            className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer"
-          >
+          <div onClick={() => navigate('/conquistas')} className="flex flex-col items-center hover:scale-105 transition-transform cursor-pointer">
             <div className="text-4xl mb-1">🏆</div>
             <span>Conquistas</span>
           </div>
@@ -69,11 +53,20 @@ export default function Dashboard() {
 
         {/* Botão principal para registrar atividade */}
         <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-white text-blue-600 font-bold text-lg px-12 py-4 rounded-full shadow-lg hover:bg-blue-100 transition-transform hover:scale-105"
+          onClick={() => setIsModalOpen(true)}
+          className="bg-white text-blue-600 font-bold text-lg px-12 py-4 rounded-full shadow-lg hover:bg-blue-100 transition-transform hover:scale-105"
         >
           Registrar atividade
         </button>
+
+        {/* --- NOSSO NOVO LINK PARA OS TUTORIAIS --- */}
+        <div 
+            onClick={() => navigate('/tutoriais')}
+            className="mt-6 text-white font-semibold tracking-wider opacity-80 hover:opacity-100 transition cursor-pointer hover:underline"
+        >
+            MELHORE NO SKATE
+        </div>
+
 
         {/* Rodapé */}
         <div className="mt-auto w-full flex justify-between items-center text-sm font-medium px-6 pt-16">
