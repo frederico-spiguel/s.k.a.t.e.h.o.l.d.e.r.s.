@@ -12,12 +12,14 @@ import java.util.Optional;
 
 public interface SeshRepository extends JpaRepository<Sesh, Long> {
 
+    // --- VERSÃO ANTIGA (ANTES DA OTIMIZAÇÃO) ---
+    // Optional<Sesh> findByUsuarioAndData(Usuario usuario, LocalDate data);
+
     @Query("SELECT s FROM Sesh s LEFT JOIN FETCH s.atividades a LEFT JOIN FETCH a.trick WHERE s.usuario = :usuario AND s.data = :data")
     Optional<Sesh> findByUsuarioAndData(@Param("usuario") Usuario usuario, @Param("data") LocalDate data);
 
     @Query("SELECT DISTINCT s.data FROM Sesh s WHERE s.usuario = :usuario ORDER BY s.data DESC")
     List<LocalDate> findDistinctSeshDatesByUsuario(@Param("usuario") Usuario usuario);
 
-    // --- NOVO MTODO PARA A TELA DE PERFIL ---
     long countByUsuario(Usuario usuario);
 }
